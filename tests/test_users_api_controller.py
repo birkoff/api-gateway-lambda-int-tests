@@ -12,7 +12,7 @@ event = LambdaEventMock('myorg', 'myusername')
 # @pytest.fixture(scope="session", autouse=True)
 # def populate_data():
 #     user_data_populating_method()
-#
+#x
 #     yield
 #
 #    user_data_cleanup_method()
@@ -31,36 +31,9 @@ def created_user():
 def all_users():
     return execute(event.body('GET', '/users'), LambdaContextMock(), user_controller)
 
-# @pytest.fixture(scope="session", autouse=True)
-# def find_user(created_user):
-#     user_id = created_user.get('user_id')
-#     return execute(event.body('GET', '/user', {"user_id": user_id}), LambdaContextMock(), user_controller)
-#
-# @pytest.fixture(scope="session", autouse=True)
-# def updated_user(created_user):
-#     user_id = created_user.get('user_id')
-#     return execute(event.body('PUT', '/user',
-#                           {"user_id": user_id},
-#                           {
-#                              "name": "UPDATED USER NAME"
-#                           }
-#                           ), LambdaContextMock(), user_controller)
-#
-#
-# @pytest.fixture(scope="session", autouse=True)
-# def deleted_user(new_invoice):
-#     return execute(event.body('DELETE', '/user',
-#                       {
-#                           "invoice_id": new_invoice.get('invoices'),
-#                           "expand": "line_items",
-#                       }
-#                       ), LambdaContextMock(), user_controller)
-
-
-
 class TestUserApiController:
     def test_create_user(self, created_user):
-        assert 'body' in created_user
+        assert 'user_id' in created_user
 
 
 
