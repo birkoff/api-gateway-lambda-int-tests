@@ -1,7 +1,7 @@
 import base64
 import json
 from http import HTTPStatus
-
+from dataclasses import dataclass
 from aws_lambda_powertools import Logger, Tracer, Metrics
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig, Response
 from aws_lambda_powertools.event_handler.exceptions import (BadRequestError, InternalServerError)
@@ -144,6 +144,23 @@ def delete_user():
 @tracer.capture_lambda_handler
 @metrics.log_metrics(capture_cold_start_metric=True)
 def proxy_handler(event, context: LambdaContext):
+    auth_data = event.get('requestContext').get('authorizer').get('claims')
+    if not auth_data:
+        logger.exception("Invalid AUTH Header. Please review Bearer Token", extra=auth_data)
+        raise ValueError('Invalid AUTH Header. Please review Bearer Token.')
+    logger.append_keys(method=event.get('httpMethod'))
+    logger.append_keys(resouce=event.get('resource'))
+    logger.append_keys(query_params=event.get('queryStringParameters'))
+    logger.append_keys(environment=event.get('stage'))
+    logger.append_keys(organization=auth_data.get('custom:organization'))
+    logger.append_keys(username=auth_data.get('cognito:username'))
+    metrics.set_default_dimensions(environment="dev", organization=auth_data.get('custom:organization'),
+                                   username=auth_data.get('cognito:username'))
     print("*" * 88)
-    print("-" * 88)
-    return app.resolve(event, context)
+    print("==================================== Invoices API ====================================")
+    print("*" * 88)
+    response = app.resolve(event, context)
+    metrics.flush_metrics()
+    return response
+
+
