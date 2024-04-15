@@ -1,9 +1,11 @@
 import json
 
+
 def execute(_event, _context, controller):
     response = controller.proxy_handler(_event, _context)
     body = response.get('body')
     return json.loads(body)
+
 
 class LambdaEventMock:
     def __init__(self, organization, username):
@@ -71,6 +73,7 @@ class LambdaEventMock:
             "body": json.dumps(body),
             "isBase64Encoded": False
         }
+
 
 class LambdaContextMock:
     def __init__(self):

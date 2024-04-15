@@ -1,2 +1,5 @@
 pytest
 aws_lambda_powertools[aws-sdk]
+requests
+aws_xray_sdk
+pydantic

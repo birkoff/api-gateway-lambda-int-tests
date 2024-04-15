@@ -1,0 +1,8 @@
+POST https://testapi-dev.dev-entrywriter.junctionnet.tech/user
+Content-Type: application/json
+
+{
+  "user_id": "str",
+  "username": "str",
+  "full_name": "str"
+}
